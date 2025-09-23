@@ -1,0 +1,62 @@
+SELECT
+  'Covered' AS category,
+  SUM(covered_lines) AS value
+FROM code_coverage
+WHERE repo = '$repo' AND run_timestamp = (
+    SELECT MAX(run_timestamp) FROM code_coverage WHERE repo = '$repo'
+)
+UNION ALL
+SELECT
+  'Uncovered' AS category,
+  SUM(uncovered_lines) AS value
+FROM code_coverage
+WHERE repo = '$repo' AND run_timestamp = (
+    SELECT MAX(run_timestamp) FROM code_coverage WHERE repo = '$repo'
+);
+Covered vs Uncovered Lines Pie Chart
+
+
+
+SELECT SUM(total_lines) AS total_lines
+FROM code_coverage
+WHERE repo = '$repo' AND run_timestamp = (
+    SELECT MAX(run_timestamp) FROM code_coverage WHERE repo = '$repo'
+);
+Step 3: Total Lines (Single Stat or Gauge)
+
+
+SELECT ROUND(SUM(covered_lines) / NULLIF(SUM(total_lines),0) * 100, 2) AS coverage_percent
+FROM code_coverage
+WHERE repo = '$repo' AND run_timestamp = (
+    SELECT MAX(run_timestamp) FROM code_coverage WHERE repo = '$repo'
+);
+Step 4: Coverage Percent (Single Stat or Gauge)
+
+
+
+SELECT
+  'Covered' AS category,
+  SUM(covered_branches) AS value
+FROM code_coverage
+WHERE repo = '$repo' AND run_timestamp = (
+    SELECT MAX(run_timestamp) FROM code_coverage WHERE repo = '$repo'
+)
+UNION ALL
+SELECT
+  'Uncovered' AS category,
+  SUM(uncovered_branches) AS value
+FROM code_coverage
+WHERE repo = '$repo' AND run_timestamp = (
+    SELECT MAX(run_timestamp) FROM code_coverage WHERE repo = '$repo'
+);
+Covered vs Uncovered Branches Pie Chart
+
+
+
+
+SELECT ROUND(SUM(covered_branches)/NULLIF(SUM(total_branches),0) * 100, 2) AS branch_coverage_percent
+FROM code_coverage
+WHERE repo = '$repo' AND run_timestamp = (
+    SELECT MAX(run_timestamp) FROM code_coverage WHERE repo = '$repo'
+);
+Step 5: Branch Coverage Percent (Single Stat or Gauge)
